@@ -53,6 +53,110 @@ const steps = [
   },
 ];
 
+function getHowToPlaySteps(mode: typeof LEVELS[number]['mode']) {
+  if (mode === 'classify-all') {
+    return [
+      {
+        icon: Tag,
+        color: 'text-amber-600',
+        bg: 'bg-amber-50',
+        title: 'Step 1 - Read Each Requirement',
+        description: 'Every statement in this level is already an approved requirement.',
+      },
+      {
+        icon: Layers,
+        color: 'text-indigo-600',
+        bg: 'bg-indigo-50',
+        title: 'Step 2 - Choose Its Type',
+        description: 'Classify each one as Functional or Non-Functional.',
+      },
+      {
+        icon: CheckSquare,
+        color: 'text-emerald-600',
+        bg: 'bg-emerald-50',
+        title: 'Step 3 - Submit When Complete',
+        description: 'The level is ready when every requirement has a selected type.',
+      },
+    ];
+  }
+
+  if (mode === 'prioritise-only') {
+    return [
+      {
+        icon: BookOpen,
+        color: 'text-indigo-600',
+        bg: 'bg-indigo-50',
+        title: 'Step 1 - Review Approved Items',
+        description: 'Every statement in this level is already an approved requirement.',
+      },
+      {
+        icon: BarChart2,
+        color: 'text-emerald-600',
+        bg: 'bg-emerald-50',
+        title: 'Step 2 - Assign Priority',
+        description: 'Choose High, Medium, or Low based on risk, value, urgency, and impact.',
+      },
+      {
+        icon: Star,
+        color: 'text-amber-600',
+        bg: 'bg-amber-50',
+        title: 'Step 3 - Balance Trade-Offs',
+        description: 'High priority should be reserved for the most important project needs.',
+      },
+    ];
+  }
+
+  if (mode === 'identify-only') {
+    return [
+      {
+        icon: BookOpen,
+        color: 'text-indigo-600',
+        bg: 'bg-indigo-50',
+        title: 'Step 1 - Read The Notes',
+        description: 'Review each stakeholder statement carefully before selecting anything.',
+      },
+      {
+        icon: CheckSquare,
+        color: 'text-emerald-600',
+        bg: 'bg-emerald-50',
+        title: 'Step 2 - Select Valid Requirements',
+        description: 'Check only statements that are specific, actionable, and testable.',
+      },
+      {
+        icon: Star,
+        color: 'text-amber-600',
+        bg: 'bg-amber-50',
+        title: 'Step 3 - Avoid Vague Ideas',
+        description: 'Leave opinions, preferences, and unclear suggestions unselected.',
+      },
+    ];
+  }
+
+  return [
+    {
+      icon: CheckSquare,
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50',
+      title: 'Step 1 - Identify Requirements',
+      description: 'Check only the statements you believe are valid, actionable software requirements.',
+    },
+    {
+      icon: Tag,
+      color: 'text-amber-600',
+      bg: 'bg-amber-50',
+      title: 'Step 2 - Classify Selected Items',
+      description: 'For each selected requirement, choose Functional or Non-Functional.',
+    },
+    {
+      icon: BarChart2,
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-50',
+      title: 'Step 3 - Assign Priority',
+      description: 'Set High, Medium, or Low priority based on impact, risk, and urgency.',
+    },
+  ];
+}
+
 export default function StartScreenClient() {
   const router = useRouter();
   const [level, setLevel] = useState(LEVELS[0]);
@@ -60,6 +164,7 @@ export default function StartScreenClient() {
   const [hasSavedProgress, setHasSavedProgress] = useState(false);
   const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
+  const modeSteps = getHowToPlaySteps(level.mode);
 
   useEffect(() => {
     const selectedLevel = getLevelById(getSelectedLevelId());
@@ -192,7 +297,7 @@ export default function StartScreenClient() {
           How to Play
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {steps?.map((step, i) => (
+          {modeSteps?.map((step, i) => (
             <div
               key={`step-${i + 1}`}
               className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
