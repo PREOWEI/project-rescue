@@ -537,9 +537,9 @@ export default function HomeDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 px-4 py-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 px-3 py-4 sm:px-4 sm:py-8">
       <div className="max-w-6xl mx-auto">
-        <section className="mb-6 relative rounded-2xl border border-slate-200 bg-white shadow-sm p-6 sm:p-7">
+        <section className="mb-4 sm:mb-6 relative rounded-2xl border border-slate-200 bg-white shadow-sm p-4 sm:p-7">
           <button
             onClick={() => setShowSettings(true)}
             className="absolute right-5 top-5 inline-flex items-center justify-center w-11 h-11 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-indigo-600 hover:bg-slate-50 active:scale-95 shadow-sm transition-all duration-150"
@@ -547,13 +547,13 @@ export default function HomeDashboard() {
           >
             <Settings size={18} />
           </button>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between pr-14">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end lg:justify-between pr-12 sm:pr-14">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
                 <BriefcaseBusiness size={14} />
                 Requirements Engineering Career
               </div>
-              <h1 className="text-4xl sm:text-5xl font-800 text-slate-900 tracking-tight" style={{ fontWeight: 800 }}>
+              <h1 className="text-3xl sm:text-5xl font-800 text-slate-900 tracking-tight" style={{ fontWeight: 800 }}>
                 Project <span className="text-indigo-600">Rescue</span>
               </h1>
               <p className="text-slate-500 text-sm sm:text-base mt-3 leading-relaxed">
@@ -565,7 +565,7 @@ export default function HomeDashboard() {
               <a
                 onClick={() => selectLevel(primaryLevel.id)}
                 href="/start-screen"
-                className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-150"
+                className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-150"
               >
                 {primaryLabel}
                 <ArrowRight size={17} />
@@ -574,14 +574,14 @@ export default function HomeDashboard() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-5 mb-4 sm:mb-5">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
             <div className="flex flex-col gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
                   Current Role
                 </p>
-                <h2 className="text-xl font-700 text-slate-900" style={{ fontWeight: 700 }}>
+                <h2 className="text-lg sm:text-xl font-700 text-slate-900" style={{ fontWeight: 700 }}>
                   {career.current.title}
                 </h2>
               </div>
@@ -592,19 +592,19 @@ export default function HomeDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
               Portfolio
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-3xl font-800 text-slate-900 leading-none" style={{ fontWeight: 800 }}>
+                <p className="text-2xl sm:text-3xl font-800 text-slate-900 leading-none" style={{ fontWeight: 800 }}>
                   {attemptedProjects}
                 </p>
                 <p className="text-sm font-semibold text-slate-500 mt-1">attempted</p>
               </div>
               <div>
-                <p className="text-3xl font-800 text-slate-900 leading-none" style={{ fontWeight: 800 }}>
+                <p className="text-2xl sm:text-3xl font-800 text-slate-900 leading-none" style={{ fontWeight: 800 }}>
                   {projectsSaved}
                 </p>
                 <p className="text-sm font-semibold text-slate-500 mt-1">saved</p>
@@ -612,11 +612,11 @@ export default function HomeDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
               Next Rank
             </p>
-            <h2 className="text-xl font-700 text-slate-900 mb-5" style={{ fontWeight: 700 }}>
+            <h2 className="text-lg sm:text-xl font-700 text-slate-900 mb-4 sm:mb-5" style={{ fontWeight: 700 }}>
               {career.next.title}
             </h2>
             <div className="mb-2 flex items-center justify-between gap-3">
@@ -636,8 +636,8 @@ export default function HomeDashboard() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-[1fr_430px] gap-5 mb-6 items-stretch">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 min-h-[210px]">
+        <section className="grid grid-cols-1 lg:grid-cols-[1fr_430px] gap-3 sm:gap-5 mb-4 sm:mb-6 items-stretch">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 sm:min-h-[210px]">
             <div className="mb-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
@@ -653,8 +653,11 @@ export default function HomeDashboard() {
             </div>
 
             <div className={`grid grid-cols-1 gap-3 transition-opacity duration-200 ${tipsFading ? 'opacity-0' : 'opacity-100'}`}>
-              {visibleTips.map((tip) => (
-                <div key={tip.title} className="flex items-start gap-4 rounded-xl bg-slate-50 border border-slate-100 px-4 py-3">
+              {visibleTips.map((tip, index) => (
+                <div
+                  key={tip.title}
+                  className={`${index > 0 ? 'hidden sm:flex' : 'flex'} items-start gap-3 sm:gap-4 rounded-xl bg-slate-50 border border-slate-100 px-3 sm:px-4 py-3`}
+                >
                   {getTipIcon(tip.kind)}
                   <div>
                     <p className="text-sm font-700 text-slate-900" style={{ fontWeight: 700 }}>
@@ -669,7 +672,7 @@ export default function HomeDashboard() {
             </div>
           </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
               <div className="mb-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
                   Leaderboard Review
@@ -683,7 +686,7 @@ export default function HomeDashboard() {
                 {leaderboard.map((entry, index) => (
                   <div
                     key={`${entry.name}-${index}`}
-                    className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5 ${
+                    className={`${index > 2 && !entry.isPlayer ? 'hidden sm:flex' : 'flex'} items-center justify-between gap-3 rounded-xl border px-3 py-2.5 ${
                       entry.isPlayer
                         ? 'border-indigo-200 bg-indigo-50 text-indigo-700'
                         : 'border-slate-200 bg-slate-50 text-slate-600'
@@ -711,10 +714,10 @@ export default function HomeDashboard() {
             <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-400">
               Project Levels
             </h2>
-            <span className="text-xs text-slate-400">More levels can be added to the same structure.</span>
+            <span className="hidden sm:inline text-xs text-slate-400">More levels can be added to the same structure.</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {LEVELS.map((level, index) => {
               const bestScore = bestScores[level.id];
               const attemptCount = Math.max(attemptCounts[level.id] ?? 0, bestScore !== undefined ? 1 : 0);
@@ -759,9 +762,9 @@ export default function HomeDashboard() {
                       : 'border-slate-200 opacity-70 cursor-not-allowed'
                   }`}
                 >
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-3 mb-4">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+                      <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center ${
                         unlocked ? 'bg-indigo-600' : 'bg-slate-100'
                       }`}>
                         {unlocked ? (
@@ -781,10 +784,10 @@ export default function HomeDashboard() {
                     <h3 className="text-base font-700 text-slate-900 mb-2" style={{ fontWeight: 700 }}>
                       {level.title}
                     </h3>
-                    <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">
+                    <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 sm:line-clamp-3">
                       {level.projectName} for {level.clientName}
                     </p>
-                    <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-3 text-xs text-slate-400 font-medium">
+                    <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 sm:gap-3 text-xs text-slate-400 font-medium">
                       <span className="flex flex-col gap-0.5">
                         <span className="text-slate-400">Best</span>
                         <span className="font-semibold text-slate-600">{bestScore ?? 0}%</span>
@@ -793,11 +796,11 @@ export default function HomeDashboard() {
                         <span className="text-slate-400">Attempts</span>
                         <span className="font-semibold text-slate-600">{attemptCount}</span>
                       </span>
-                      <span className="flex flex-col gap-0.5">
+                      <span className="hidden sm:flex flex-col gap-0.5">
                         <span className="text-slate-400">Last played</span>
                         <span className="font-semibold text-slate-600">{formatLastPlayed(lastPlayed[level.id])}</span>
                       </span>
-                      <span className="flex flex-col gap-0.5">
+                      <span className="hidden sm:flex flex-col gap-0.5">
                         <span className="text-slate-400">Time</span>
                         <span className="font-semibold text-slate-600 flex items-center gap-1">
                         <Clock size={13} />
