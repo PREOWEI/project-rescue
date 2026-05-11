@@ -1,3 +1,8 @@
+
+## Live Prototype
+
+https://your-vercel-link.vercel.app
+
 # Project Rescue
 
 Project Rescue is an educational requirements engineering game prototype. Players analyse realistic stakeholder statements, identify valid software requirements, classify them as functional or non-functional, assign priorities, and receive feedback on their decisions.
