@@ -51,6 +51,3 @@ src/styles
 public
 ```
 
-## Prototype Purpose
-
-This prototype was created for usability testing and evaluation of gamified learning in requirements engineering. It focuses on learning progression, feedback, replay, and achievement systems rather than production authentication or a live multiplayer leaderboard.
