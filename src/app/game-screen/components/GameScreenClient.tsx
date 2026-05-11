@@ -240,7 +240,7 @@ export default function GameScreenClient() {
           </div>
           {showTimer && (
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs font-semibold tabular-nums ${timeLeft === 0 ? 'text-amber-600' : 'text-slate-500'}`}>
+              <span className={`text-sm font-700 tabular-nums ${timeLeft === 0 ? 'text-amber-600' : 'text-slate-500'}`} style={{ fontWeight: 700 }}>
                 {timeLeft === 0 ? "Time's up" : `Timer: ${formattedTime}`}
               </span>
               {timeLeft === 0 && (
