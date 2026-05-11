@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Trophy, XCircle, Star, TrendingUp, BookOpenCheck } from 'lucide-react';
+import { PASS_THRESHOLD } from '@/lib/gameData';
 
 interface ScoreHeroProps {
   percentage: number;
@@ -77,7 +78,7 @@ export default function ScoreHero({
         <span>
           {assisted
             ? 'Answers revealed for learning. XP and career progress are not updated.'
-            : `Pass threshold: 70% - ${passed ? "You're above it." : 'You need a higher score.'}`}
+            : `Pass threshold: ${PASS_THRESHOLD}% - ${passed ? "You're above it." : 'You need a higher score.'}`}
         </span>
       </div>
     </div>

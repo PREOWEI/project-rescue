@@ -61,6 +61,7 @@ export const STORAGE_KEY_LAST_PLAYED_PREFIX = 'project_rescue_last_played_';
 export const STORAGE_KEY_SHOW_TIMER = 'project_rescue_show_timer';
 export const STORAGE_KEY_THEME = 'project_rescue_theme';
 export const STORAGE_KEY_BEST_SCORE = `${STORAGE_KEY_BEST_SCORE_PREFIX}level-001`;
+export const PASS_THRESHOLD = 60;
 
 export const LEVELS: Level[] = [
   {
@@ -1151,7 +1152,7 @@ function pickRandom<T>(items: T[]): T {
 
 export function createAttemptLevel(level: Level, previousScore: number | null): Level {
   const variationStrength =
-    previousScore === null || previousScore <= 40 ? 'low' : previousScore < 70 ? 'medium' : 'high';
+    previousScore === null || previousScore <= 40 ? 'low' : previousScore < PASS_THRESHOLD ? 'medium' : 'high';
 
   const statements = level.statements.map((statement) => {
     const variation = statementVariations[statement.id];

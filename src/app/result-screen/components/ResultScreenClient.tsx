@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LEVELS,
+  PASS_THRESHOLD,
   STORAGE_KEY_GAME_STATE,
   calculateScore,
   getAssistedUnlockKey,
@@ -73,7 +74,7 @@ export default function ResultScreenClient() {
       }
 
       const hasXpScore = localStorage.getItem(getXpScoreKey(resultLevel.id)) !== null;
-      if (!permanentlyAssisted && score.percentage >= 70 && !hasXpScore) {
+      if (!permanentlyAssisted && score.percentage >= PASS_THRESHOLD && !hasXpScore) {
         localStorage.setItem(getXpScoreKey(resultLevel.id), String(score.percentage));
       }
     } catch {
@@ -93,7 +94,7 @@ export default function ResultScreenClient() {
     );
   }
 
-  const passed = scoreData.percentage >= 70;
+  const passed = scoreData.percentage >= PASS_THRESHOLD;
   const showFullReview = passed || answersRevealed;
 
   const handleRevealAnswers = () => {
@@ -216,7 +217,7 @@ function getSkillSummary(weakAreas: ReturnType<typeof getWeakAreas>) {
   if (scored.length === 1) {
     const area = scored[0];
     const clean = area.percentage === 100;
-    const passed = area.percentage >= 70;
+    const passed = area.percentage >= PASS_THRESHOLD;
 
     return {
       strongest: clean ? `${area.label}: excellent` : passed ? `${area.label}: passing accuracy` : `${area.label}: needs practice`,

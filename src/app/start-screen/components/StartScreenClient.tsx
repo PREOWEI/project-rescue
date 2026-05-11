@@ -17,6 +17,7 @@ import {
 import RevealAnswersModal from '@/components/RevealAnswersModal';
 import {
   LEVELS,
+  PASS_THRESHOLD,
   STORAGE_KEY_GAME_STATE,
   getAssistedUnlockKey,
   getBestScoreKey,
@@ -250,7 +251,7 @@ export default function StartScreenClient() {
         <div className="flex items-center gap-2 bg-white border border-amber-200 text-amber-700 px-4 py-2 rounded-xl shadow-sm mb-8 fade-in">
           <Trophy size={16} className="text-amber-500" />
           <span className="text-sm font-semibold">Your best score: {bestScore}%</span>
-          {bestScore >= 70 && (
+          {bestScore >= PASS_THRESHOLD && (
             <span className="ml-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Project Saved ✓</span>
           )}
         </div>
@@ -287,7 +288,7 @@ export default function StartScreenClient() {
           </span>
           <span className="flex items-center gap-1.5">
             <Star size={13} />
-            Pass threshold: 70%
+            Pass threshold: {PASS_THRESHOLD}%
           </span>
         </div>
       </div>

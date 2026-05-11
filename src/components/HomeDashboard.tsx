@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import {
   LEVELS,
+  PASS_THRESHOLD,
   STORAGE_KEY_GAME_STATE,
   STORAGE_KEY_SELECTED_LEVEL,
   STORAGE_KEY_SHOW_TIMER,
@@ -50,6 +51,7 @@ const careerRoles = [
 ];
 
 const xpRewards = [
+  { label: '60-69%', xp: 40 },
   { label: '70-79%', xp: 50 },
   { label: '80-89%', xp: 75 },
   { label: '90-99%', xp: 100 },
@@ -292,6 +294,7 @@ function getXpForScore(score: number | null): number {
   if (score >= 90) return 100;
   if (score >= 80) return 75;
   if (score >= 70) return 50;
+  if (score >= PASS_THRESHOLD) return 40;
   return 0;
 }
 
@@ -405,7 +408,7 @@ export default function HomeDashboard() {
   );
   const career = useMemo(() => getCareerProgress(xp), [xp]);
   const projectsSaved = LEVELS.filter(
-    (level) => (bestScores[level.id] ?? 0) >= 70 && assistedUnlocks[level.id] !== true
+    (level) => (bestScores[level.id] ?? 0) >= PASS_THRESHOLD && assistedUnlocks[level.id] !== true
   ).length;
   const attemptedProjects = LEVELS.filter(
     (level) => (attemptCounts[level.id] ?? 0) > 0 || bestScores[level.id] !== undefined
@@ -491,7 +494,7 @@ export default function HomeDashboard() {
   const isLevelUnlocked = (index: number): boolean => {
     if (index === 0) return true;
     const previousLevel = LEVELS[index - 1];
-    return (bestScores[previousLevel.id] ?? 0) >= 70 || assistedUnlocks[previousLevel.id] === true;
+    return (bestScores[previousLevel.id] ?? 0) >= PASS_THRESHOLD || assistedUnlocks[previousLevel.id] === true;
   };
 
   const unlockedLevels = LEVELS.filter((_, index) => isLevelUnlocked(index));
@@ -722,7 +725,7 @@ export default function HomeDashboard() {
               const bestScore = bestScores[level.id];
               const attemptCount = Math.max(attemptCounts[level.id] ?? 0, bestScore !== undefined ? 1 : 0);
               const assisted = assistedUnlocks[level.id] === true;
-              const passed = bestScore !== undefined && bestScore >= 70 && !assisted;
+              const passed = bestScore !== undefined && bestScore >= PASS_THRESHOLD && !assisted;
               const unlocked = isLevelUnlocked(index);
               const completionType = !unlocked
                 ? 'Locked'

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock } from 'lucide-react';
 import {
   LEVELS,
   STORAGE_KEY_GAME_STATE,
@@ -240,8 +240,16 @@ export default function GameScreenClient() {
           </div>
           {showTimer && (
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm font-700 tabular-nums ${timeLeft === 0 ? 'text-amber-600' : 'text-slate-500'}`} style={{ fontWeight: 700 }}>
-                {timeLeft === 0 ? "Time's up" : `Timer: ${formattedTime}`}
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-sm font-700 tabular-nums ${
+                  timeLeft === 0
+                    ? 'border-amber-200 bg-amber-50 text-amber-700'
+                    : 'border-indigo-200 bg-indigo-50 text-indigo-700'
+                }`}
+                style={{ fontWeight: 700 }}
+              >
+                <Clock size={14} />
+                {timeLeft === 0 ? "Time's up" : formattedTime}
               </span>
               {timeLeft === 0 && (
                 <span className="text-xs text-amber-600 font-medium">
