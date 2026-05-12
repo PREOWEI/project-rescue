@@ -322,10 +322,19 @@ function getCareerProgress(xp: number) {
 
 function createLeaderboardPreview(playerXp: number): LeaderboardEntry[] {
   const shuffledNames = [...leaderboardNames].sort(() => Math.random() - 0.5).slice(0, 4);
-  const sampleScores = shuffledNames.map((name, index) => ({
-    name,
-    xp: Math.max(0, 120 + Math.floor(Math.random() * 860) - index * 40),
-  }));
+  const scoreBands = [
+    [840, 980],
+    [620, 820],
+    [420, 610],
+    [160, 390],
+  ];
+  const sampleScores = shuffledNames.map((name, index) => {
+    const [min, max] = scoreBands[index];
+    return {
+      name,
+      xp: min + Math.floor(Math.random() * (max - min + 1)),
+    };
+  });
 
   return [...sampleScores, { name: 'You', xp: playerXp, isPlayer: true }].sort((a, b) => b.xp - a.xp);
 }
