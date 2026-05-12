@@ -17,6 +17,7 @@ interface AnswerBreakdownProps {
   statements: Statement[];
   answers: UserAnswer[];
   breakdown: Record<string, BreakdownEntry>;
+  guideMode?: boolean;
 }
 
 function StatusIcon({ correct, na }: { correct: boolean; na?: boolean }) {
@@ -55,7 +56,7 @@ function PriorityBadge({ value }: { value?: string }) {
   );
 }
 
-export default function AnswerBreakdown({ level, statements, answers, breakdown }: AnswerBreakdownProps) {
+export default function AnswerBreakdown({ level, statements, answers, breakdown, guideMode = false }: AnswerBreakdownProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const showSelection = shouldShowSelection(level);
 
@@ -63,10 +64,12 @@ export default function AnswerBreakdown({ level, statements, answers, breakdown 
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden fade-in">
       <div className="px-5 py-4 border-b border-slate-100">
         <h2 className="text-base font-700 text-slate-900" style={{ fontWeight: 700 }}>
-          Answer Breakdown
+          {guideMode ? 'Correct Answer Guide' : 'Answer Breakdown'}
         </h2>
         <p className="text-xs text-slate-400 mt-0.5">
-          See how your answers compared to the correct ones for each statement.
+          {guideMode
+            ? 'Review the correct answers and explanations. This is not scored.'
+            : 'See how your answers compared to the correct ones for each statement.'}
         </p>
       </div>
 
@@ -79,9 +82,10 @@ export default function AnswerBreakdown({ level, statements, answers, breakdown 
           const showClassification = shouldShowClassification(level, answer);
           const showPriority = shouldShowPriority(level, answer);
           const allCorrect =
-            (!showSelection || bd.selectionCorrect) &&
-            (!showClassification || bd.classificationCorrect) &&
-            (!showPriority || bd.priorityCorrect);
+            guideMode ||
+            ((!showSelection || bd.selectionCorrect) &&
+              (!showClassification || bd.classificationCorrect) &&
+              (!showPriority || bd.priorityCorrect));
 
           return (
             <div key={stmt.id} className="hover:bg-slate-50/70 transition-colors duration-150">
@@ -106,9 +110,15 @@ export default function AnswerBreakdown({ level, statements, answers, breakdown 
                   <div className="flex items-center gap-3 mt-2 flex-wrap">
                     {showSelection && (
                       <span className="flex items-center gap-1 text-xs text-slate-500">
-                        <StatusIcon correct={bd.selectionCorrect} />
-                        {userSelected ? 'Marked as requirement' : 'Not selected'}
-                        {!bd.selectionCorrect && (
+                        {!guideMode && <StatusIcon correct={bd.selectionCorrect} />}
+                        {guideMode
+                          ? stmt.isRequirement
+                            ? 'Correct: select this requirement'
+                            : 'Correct: do not select this statement'
+                          : userSelected
+                          ? 'Marked as requirement'
+                          : 'Not selected'}
+                        {!guideMode && !bd.selectionCorrect && (
                           <span className="text-red-400 font-medium ml-1">
                             (should be {stmt.isRequirement ? 'selected' : 'not selected'})
                           </span>
@@ -118,9 +128,9 @@ export default function AnswerBreakdown({ level, statements, answers, breakdown 
 
                     {showClassification && (
                       <span className="flex items-center gap-1 text-xs text-slate-500">
-                        <StatusIcon correct={bd.classificationCorrect} />
-                        <ClassificationBadge value={answer?.classification} />
-                        {!bd.classificationCorrect && (
+                        {!guideMode && <StatusIcon correct={bd.classificationCorrect} />}
+                        <ClassificationBadge value={guideMode ? stmt.correctClassification : answer?.classification} />
+                        {!guideMode && !bd.classificationCorrect && (
                           <span className="text-red-400 font-medium">
                             should be <ClassificationBadge value={stmt.correctClassification} />
                           </span>
@@ -130,9 +140,9 @@ export default function AnswerBreakdown({ level, statements, answers, breakdown 
 
                     {showPriority && (
                       <span className="flex items-center gap-1 text-xs text-slate-500">
-                        <StatusIcon correct={bd.priorityCorrect} />
-                        <PriorityBadge value={answer?.priority} />
-                        {!bd.priorityCorrect && (
+                        {!guideMode && <StatusIcon correct={bd.priorityCorrect} />}
+                        <PriorityBadge value={guideMode ? stmt.correctPriority : answer?.priority} />
+                        {!guideMode && !bd.priorityCorrect && (
                           <span className="text-red-400 font-medium">
                             should be <PriorityBadge value={stmt.correctPriority} />
                           </span>

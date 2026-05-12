@@ -81,9 +81,10 @@ export default function ResultScreenClient() {
         ? localStorage.getItem(getLastScoreKey(resultLevel.id)) ?? localStorage.getItem(getBestScoreKey(resultLevel.id))
         : null;
       const preservedScore = preservedScoreRaw !== null ? parseInt(preservedScoreRaw, 10) : null;
-      setScoreSuppressed(firstAssistedReveal && preservedScore === null);
+      const suppressScore = revealOnly && permanentlyAssisted;
+      setScoreSuppressed(suppressScore);
       const displayedScore =
-        revealOnly && preservedScore !== null
+        revealOnly && preservedScore !== null && !suppressScore
           ? {
               ...score,
               percentage: preservedScore,
@@ -124,7 +125,7 @@ export default function ResultScreenClient() {
     );
   }
 
-  const passed = scoreData.percentage >= PASS_THRESHOLD;
+  const passed = !scoreSuppressed && scoreData.percentage >= PASS_THRESHOLD;
   const showFullReview = passed || answersRevealed;
 
   const handleRevealAnswers = () => {
@@ -133,6 +134,7 @@ export default function ResultScreenClient() {
     setShowRevealConfirm(false);
     setAnswersRevealed(true);
     setAssistedResult(true);
+    setScoreSuppressed(true);
   };
 
   const weakAreas = getWeakAreas(level, scoreData.breakdown);
@@ -162,7 +164,7 @@ export default function ResultScreenClient() {
           scoreSuppressed={scoreSuppressed}
         />
 
-        <SkillSummary summary={skillSummary} />
+        {scoreSuppressed ? <AssistedReviewSummary /> : <SkillSummary summary={skillSummary} />}
 
         {passed && <WhyThisMatters level={level} />}
 
@@ -172,6 +174,7 @@ export default function ResultScreenClient() {
             level={level}
             answers={answers}
             breakdown={scoreData.breakdown}
+            guideMode={scoreSuppressed}
           />
         ) : (
           <FailureFeedback
@@ -211,6 +214,25 @@ function WhyThisMatters({ level }: { level: Level }) {
       <p className="text-sm text-slate-600 leading-relaxed">
         {modeMessage} In real {level.industry.toLowerCase()} projects, these decisions reduce rework, prevent unclear handoffs, and help teams build the right thing first.
       </p>
+    </div>
+  );
+}
+
+function AssistedReviewSummary() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 p-5 fade-in">
+      <h2 className="text-base font-700 text-slate-900 mb-3" style={{ fontWeight: 700 }}>
+        Learning Review
+      </h2>
+      <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-amber-700 mb-1">
+          Assisted Mode
+        </p>
+        <p className="text-sm font-semibold text-slate-800">Correct answers are being shown for practice.</p>
+        <p className="text-xs text-slate-600 leading-relaxed mt-1">
+          This is not counted as a scored attempt. Retry the level normally when you want to earn XP or improve your best score.
+        </p>
+      </div>
     </div>
   );
 }
