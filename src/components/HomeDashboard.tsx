@@ -364,15 +364,16 @@ export default function HomeDashboard() {
     const attempts: Record<string, number> = {};
     const played: Record<string, string> = {};
     for (const level of LEVELS) {
+      const isAssisted = localStorage.getItem(getAssistedUnlockKey(level.id)) === '1';
       const storedScore = localStorage.getItem(getBestScoreKey(level.id));
       if (storedScore !== null) {
         scores[level.id] = parseInt(storedScore, 10);
       }
       const storedXpScore = localStorage.getItem(getXpScoreKey(level.id));
-      if (storedXpScore !== null) {
+      if (storedXpScore !== null && !isAssisted) {
         xpScoreValues[level.id] = parseInt(storedXpScore, 10);
       }
-      assisted[level.id] = localStorage.getItem(getAssistedUnlockKey(level.id)) === '1';
+      assisted[level.id] = isAssisted;
       attempts[level.id] = parseInt(localStorage.getItem(getAttemptCountKey(level.id)) || '0', 10);
       const storedLastPlayed = localStorage.getItem(getLastPlayedKey(level.id));
       if (storedLastPlayed) {

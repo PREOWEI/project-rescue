@@ -30,6 +30,7 @@ export default function ResultScreenClient() {
   const [isNewBest, setIsNewBest] = useState(false);
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const [scoreSuppressed, setScoreSuppressed] = useState(false);
+  const [assistedResult, setAssistedResult] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
 
   useEffect(() => {
@@ -66,13 +67,18 @@ export default function ResultScreenClient() {
         localStorage.removeItem(getRevealRequestKey(resultLevel.id));
         if (firstAssistedReveal) {
           localStorage.setItem(getAssistedUnlockKey(resultLevel.id), '1');
+          localStorage.removeItem(getXpScoreKey(resultLevel.id));
           permanentlyAssisted = true;
         }
         setAnswersRevealed(true);
       }
+      if (permanentlyAssisted) {
+        localStorage.removeItem(getXpScoreKey(resultLevel.id));
+      }
+      setAssistedResult(permanentlyAssisted);
 
       const preservedScoreRaw = revealOnly
-        ? localStorage.getItem(getBestScoreKey(resultLevel.id)) ?? localStorage.getItem(getLastScoreKey(resultLevel.id))
+        ? localStorage.getItem(getLastScoreKey(resultLevel.id)) ?? localStorage.getItem(getBestScoreKey(resultLevel.id))
         : null;
       const preservedScore = preservedScoreRaw !== null ? parseInt(preservedScoreRaw, 10) : null;
       setScoreSuppressed(firstAssistedReveal && preservedScore === null);
@@ -120,12 +126,13 @@ export default function ResultScreenClient() {
 
   const passed = scoreData.percentage >= PASS_THRESHOLD;
   const showFullReview = passed || answersRevealed;
-  const assistedResult = answersRevealed && (scoreSuppressed || scoreData.percentage < PASS_THRESHOLD);
 
   const handleRevealAnswers = () => {
     localStorage.setItem(getAssistedUnlockKey(level.id), '1');
+    localStorage.removeItem(getXpScoreKey(level.id));
     setShowRevealConfirm(false);
     setAnswersRevealed(true);
+    setAssistedResult(true);
   };
 
   const weakAreas = getWeakAreas(level, scoreData.breakdown);
