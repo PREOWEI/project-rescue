@@ -6,11 +6,12 @@ import { BookOpenCheck } from 'lucide-react';
 interface RevealAnswersModalProps {
   onCancel: () => void;
   onConfirm: () => void;
-  mode?: 'assisted' | 'review';
+  mode?: 'assisted' | 'review' | 'assisted-review';
 }
 
 export default function RevealAnswersModal({ onCancel, onConfirm, mode = 'assisted' }: RevealAnswersModalProps) {
   const isReview = mode === 'review';
+  const isAssistedReview = mode === 'assisted-review';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
@@ -19,16 +20,20 @@ export default function RevealAnswersModal({ onCancel, onConfirm, mode = 'assist
           <BookOpenCheck size={24} className="text-amber-600" />
         </div>
         <h2 className="text-base font-700 text-slate-900 mb-2" style={{ fontWeight: 700 }}>
-          {isReview ? 'Review correct answers?' : 'Reveal correct answers?'}
+          {isReview || isAssistedReview ? 'Review correct answers?' : 'Reveal correct answers?'}
         </h2>
         <p className="text-sm text-slate-500 leading-relaxed mb-4">
-          {isReview
+          {isAssistedReview
+            ? 'This level was already completed with Assisted Mode. You can reopen the answer review to keep learning from it.'
+            : isReview
             ? 'You already saved this project normally. This opens the answer review again so you can learn from it.'
             : 'This is a helpful learning option. You will see the correct answers and explanations, and the next level can still unlock so you can keep practising.'}
         </p>
         <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 mb-5">
           <p className="text-xs text-amber-700 leading-relaxed">
-            {isReview
+            {isAssistedReview
+              ? 'Your completion stays Assisted. This review will not award XP or count toward career role progress.'
+              : isReview
               ? 'Your completion stays Normal. This review will not change your XP, best score, or career progress.'
               : 'This attempt will be marked as Assisted. It can help you continue learning, but it will not award XP or count toward career role progress.'}
           </p>
@@ -38,13 +43,13 @@ export default function RevealAnswersModal({ onCancel, onConfirm, mode = 'assist
             onClick={onCancel}
             className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 font-semibold text-sm transition-all duration-150"
           >
-            {isReview ? 'Cancel' : 'Keep Trying'}
+            {isReview || isAssistedReview ? 'Cancel' : 'Keep Trying'}
           </button>
           <button
             onClick={onConfirm}
             className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-semibold text-sm shadow-sm transition-all duration-150"
           >
-            {isReview ? 'Review Answers' : 'Reveal Answers'}
+            {isReview || isAssistedReview ? 'Review Answers' : 'Reveal Answers'}
           </button>
         </div>
       </div>

@@ -162,11 +162,13 @@ export default function StartScreenClient() {
   const router = useRouter();
   const [level, setLevel] = useState(LEVELS[0]);
   const [bestScore, setBestScore] = useState<number | null>(null);
+  const [hasAssistedUnlock, setHasAssistedUnlock] = useState(false);
   const [hasSavedProgress, setHasSavedProgress] = useState(false);
   const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
   const modeSteps = getHowToPlaySteps(level.mode);
   const hasNormalPass = bestScore !== null && bestScore >= PASS_THRESHOLD;
+  const revealMode = hasNormalPass ? 'review' : hasAssistedUnlock ? 'assisted-review' : 'assisted';
 
   useEffect(() => {
     const selectedLevel = getLevelById(getSelectedLevelId());
@@ -178,6 +180,7 @@ export default function StartScreenClient() {
     } else {
       setBestScore(null);
     }
+    setHasAssistedUnlock(localStorage.getItem(getAssistedUnlockKey(selectedLevel.id)) === '1');
     const gameState = localStorage.getItem(STORAGE_KEY_GAME_STATE);
     if (gameState) {
       try {
@@ -202,38 +205,47 @@ export default function StartScreenClient() {
     router?.push('/game-screen');
   };
 
-  const handleRevealAnswers = () => {
-    if (hasNormalPass) {
-      const saved = localStorage.getItem(STORAGE_KEY_GAME_STATE);
-      let hasSubmittedReviewState = false;
+  const prepareResultStateForCurrentLevel = () => {
+    const saved = localStorage.getItem(STORAGE_KEY_GAME_STATE);
 
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          hasSubmittedReviewState = parsed?.levelId === level.id && parsed?.submitted === true;
-        } catch {
-          hasSubmittedReviewState = false;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed?.levelId === level.id && parsed?.submitted === true) {
+          return;
         }
+      } catch {
+        // Replace broken saved state with a clean review state below.
       }
+    }
 
-      if (!hasSubmittedReviewState) {
-        localStorage.setItem(
-          STORAGE_KEY_GAME_STATE,
-          JSON.stringify({
-            levelId: level.id,
-            answers: level.statements.map((statement) => ({
-              statementId: statement.id,
-              selected: statement.isRequirement,
-              classification: statement.isRequirement ? statement.correctType : undefined,
-              priority: statement.isRequirement ? statement.correctPriority : undefined,
-            })),
-            submitted: true,
-            statementOrder: level.statements.map((statement) => statement.id),
-          }),
-        );
-      }
+    localStorage.setItem(
+      STORAGE_KEY_GAME_STATE,
+      JSON.stringify({
+        levelId: level.id,
+        answers: level.statements.map((statement) => ({
+          statementId: statement.id,
+          selected: level.mode === 'mixed' || level.mode === 'identify-only' ? statement.isRequirement : true,
+          classification: statement.correctType,
+          priority: statement.correctPriority,
+        })),
+        submitted: true,
+        statementOrder: level.statements.map((statement) => statement.id),
+      }),
+    );
+  };
 
+  const handleRevealAnswers = () => {
+    prepareResultStateForCurrentLevel();
+
+    if (hasNormalPass) {
       localStorage.setItem(getRevealRequestKey(level.id), 'review');
+      router?.push('/result-screen');
+      return;
+    }
+
+    if (hasAssistedUnlock) {
+      localStorage.setItem(getRevealRequestKey(level.id), 'assisted-review');
       router?.push('/result-screen');
       return;
     }
@@ -364,7 +376,7 @@ export default function StartScreenClient() {
             onClick={() => setShowRevealConfirm(true)}
             className="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-700 font-semibold px-6 py-3.5 rounded-xl border border-amber-200 shadow-sm transition-all duration-150 text-base"
           >
-            {hasNormalPass ? 'Review Correct Answers' : 'Reveal Correct Answers'}
+            {hasNormalPass || hasAssistedUnlock ? 'Review Correct Answers' : 'Reveal Correct Answers'}
           </button>
         )}
         {hasSavedProgress && (
@@ -383,7 +395,7 @@ export default function StartScreenClient() {
         <RevealAnswersModal
           onCancel={() => setShowRevealConfirm(false)}
           onConfirm={handleRevealAnswers}
-          mode={hasNormalPass ? 'review' : 'assisted'}
+          mode={revealMode}
         />
       )}
     </div>
