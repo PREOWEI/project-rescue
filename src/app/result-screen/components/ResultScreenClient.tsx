@@ -29,6 +29,7 @@ export default function ResultScreenClient() {
   const [scoreData, setScoreData] = useState<ReturnType<typeof calculateScore> | null>(null);
   const [isNewBest, setIsNewBest] = useState(false);
   const [answersRevealed, setAnswersRevealed] = useState(false);
+  const [scoreSuppressed, setScoreSuppressed] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
 
   useEffect(() => {
@@ -56,30 +57,48 @@ export default function ResultScreenClient() {
       const loadedAnswers: UserAnswer[] = parsed.answers;
       setAnswers(loadedAnswers);
       const score = calculateScore(resultLevel, loadedAnswers);
-      setScoreData(score);
-      localStorage.setItem(getLastScoreKey(resultLevel.id), String(score.percentage));
       let permanentlyAssisted = localStorage.getItem(getAssistedUnlockKey(resultLevel.id)) === '1';
       const revealRequest = localStorage.getItem(getRevealRequestKey(resultLevel.id));
-      const reviewOnly = revealRequest === 'review';
+      const revealOnly = Boolean(revealRequest);
+      const firstAssistedReveal = revealRequest === 'assisted' || revealRequest === '1';
 
       if (revealRequest) {
         localStorage.removeItem(getRevealRequestKey(resultLevel.id));
-        if (revealRequest === 'assisted' || revealRequest === '1') {
+        if (firstAssistedReveal) {
           localStorage.setItem(getAssistedUnlockKey(resultLevel.id), '1');
           permanentlyAssisted = true;
         }
         setAnswersRevealed(true);
       }
 
+      const preservedScoreRaw = revealOnly
+        ? localStorage.getItem(getBestScoreKey(resultLevel.id)) ?? localStorage.getItem(getLastScoreKey(resultLevel.id))
+        : null;
+      const preservedScore = preservedScoreRaw !== null ? parseInt(preservedScoreRaw, 10) : null;
+      setScoreSuppressed(firstAssistedReveal && preservedScore === null);
+      const displayedScore =
+        revealOnly && preservedScore !== null
+          ? {
+              ...score,
+              percentage: preservedScore,
+              correct: Math.min(score.total, Math.max(0, Math.round((score.total * preservedScore) / 100))),
+            }
+          : score;
+      setScoreData(displayedScore);
+
+      if (!revealOnly) {
+        localStorage.setItem(getLastScoreKey(resultLevel.id), String(score.percentage));
+      }
+
       const prevBest = localStorage.getItem(getBestScoreKey(resultLevel.id));
       const prevBestNum = prevBest !== null ? parseInt(prevBest, 10) : -1;
-      if (!permanentlyAssisted && !reviewOnly && score.percentage > prevBestNum) {
+      if (!permanentlyAssisted && !revealOnly && score.percentage > prevBestNum) {
         localStorage.setItem(getBestScoreKey(resultLevel.id), String(score.percentage));
         setIsNewBest(true);
       }
 
       const hasXpScore = localStorage.getItem(getXpScoreKey(resultLevel.id)) !== null;
-      if (!permanentlyAssisted && !reviewOnly && score.percentage >= PASS_THRESHOLD && !hasXpScore) {
+      if (!permanentlyAssisted && !revealOnly && score.percentage >= PASS_THRESHOLD && !hasXpScore) {
         localStorage.setItem(getXpScoreKey(resultLevel.id), String(score.percentage));
       }
     } catch {
@@ -101,6 +120,7 @@ export default function ResultScreenClient() {
 
   const passed = scoreData.percentage >= PASS_THRESHOLD;
   const showFullReview = passed || answersRevealed;
+  const assistedResult = answersRevealed && (scoreSuppressed || scoreData.percentage < PASS_THRESHOLD);
 
   const handleRevealAnswers = () => {
     localStorage.setItem(getAssistedUnlockKey(level.id), '1');
@@ -131,7 +151,8 @@ export default function ResultScreenClient() {
           total={scoreData.total}
           passed={passed}
           isNewBest={isNewBest}
-          assisted={answersRevealed && !passed}
+          assisted={assistedResult}
+          scoreSuppressed={scoreSuppressed}
         />
 
         <SkillSummary summary={skillSummary} />

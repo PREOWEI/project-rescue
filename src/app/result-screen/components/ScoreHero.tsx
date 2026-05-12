@@ -11,6 +11,7 @@ interface ScoreHeroProps {
   passed: boolean;
   isNewBest: boolean;
   assisted: boolean;
+  scoreSuppressed?: boolean;
 }
 
 export default function ScoreHero({
@@ -20,6 +21,7 @@ export default function ScoreHero({
   passed,
   isNewBest,
   assisted,
+  scoreSuppressed = false,
 }: ScoreHeroProps) {
   const positive = passed || assisted;
 
@@ -59,11 +61,11 @@ export default function ScoreHero({
           className={`text-6xl font-800 ${positive ? 'text-emerald-600' : 'text-red-500'}`}
           style={{ fontWeight: 800 }}
         >
-          {percentage}%
+          {scoreSuppressed ? 'Review' : `${percentage}%`}
         </span>
       </div>
       <p className="text-sm text-slate-500 mt-1 font-medium">
-        {correct} out of {total} points correct
+        {scoreSuppressed ? 'No score is awarded in Assisted Mode' : `${correct} out of ${total} points correct`}
       </p>
 
       {isNewBest && !assisted && (
@@ -77,7 +79,7 @@ export default function ScoreHero({
         <TrendingUp size={13} />
         <span>
           {assisted
-            ? 'Answers revealed for learning. XP and career progress are not updated.'
+            ? 'Answers revealed for learning. Scores, XP, and career progress are not updated.'
             : `Pass threshold: ${PASS_THRESHOLD}% - ${passed ? "You're above it." : 'You need a higher score.'}`}
         </span>
       </div>
