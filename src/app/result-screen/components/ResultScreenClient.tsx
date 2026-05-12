@@ -31,6 +31,7 @@ export default function ResultScreenClient() {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const [scoreSuppressed, setScoreSuppressed] = useState(false);
   const [assistedResult, setAssistedResult] = useState(false);
+  const [guideOnlyReview, setGuideOnlyReview] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
 
   useEffect(() => {
@@ -62,6 +63,8 @@ export default function ResultScreenClient() {
       const revealRequest = localStorage.getItem(getRevealRequestKey(resultLevel.id));
       const revealOnly = Boolean(revealRequest);
       const firstAssistedReveal = revealRequest === 'assisted' || revealRequest === '1';
+      const isGuideOnlyReview = parsed?.reviewGuideOnly === true || revealRequest === 'review-guide' || revealRequest === 'assisted-review-guide';
+      setGuideOnlyReview(isGuideOnlyReview);
 
       if (revealRequest) {
         localStorage.removeItem(getRevealRequestKey(resultLevel.id));
@@ -164,7 +167,13 @@ export default function ResultScreenClient() {
           scoreSuppressed={scoreSuppressed}
         />
 
-        {scoreSuppressed ? <AssistedReviewSummary /> : <SkillSummary summary={skillSummary} />}
+        {scoreSuppressed ? (
+          <AssistedReviewSummary />
+        ) : guideOnlyReview ? (
+          <ReviewGuideSummary percentage={scoreData.percentage} />
+        ) : (
+          <SkillSummary summary={skillSummary} />
+        )}
 
         {passed && <WhyThisMatters level={level} />}
 
@@ -174,7 +183,7 @@ export default function ResultScreenClient() {
             level={level}
             answers={answers}
             breakdown={scoreData.breakdown}
-            guideMode={scoreSuppressed}
+            guideMode={scoreSuppressed || guideOnlyReview}
           />
         ) : (
           <FailureFeedback
@@ -232,6 +241,34 @@ function AssistedReviewSummary() {
         <p className="text-xs text-slate-600 leading-relaxed mt-1">
           This is not counted as a scored attempt. Retry the level normally when you want to earn XP or improve your best score.
         </p>
+      </div>
+    </div>
+  );
+}
+
+function ReviewGuideSummary({ percentage }: { percentage: number }) {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 p-5 fade-in">
+      <h2 className="text-base font-700 text-slate-900 mb-3" style={{ fontWeight: 700 }}>
+        Review Summary
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-1">
+            Project Saved
+          </p>
+          <p className="text-sm font-semibold text-slate-800">Your saved score is {percentage}%.</p>
+          <p className="text-xs text-slate-600 leading-relaxed mt-1">
+            This review is showing the correct answers for learning, not a new scored attempt.
+          </p>
+        </div>
+        <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-amber-700 mb-1">Review Next</p>
+          <p className="text-sm font-semibold text-slate-800">Compare the correct answers carefully.</p>
+          <p className="text-xs text-slate-600 leading-relaxed mt-1">
+            Retry normally if you want to improve the saved score shown above.
+          </p>
+        </div>
       </div>
     </div>
   );

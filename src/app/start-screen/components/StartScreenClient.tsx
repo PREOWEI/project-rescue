@@ -212,7 +212,7 @@ export default function StartScreenClient() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed?.levelId === level.id && parsed?.submitted === true) {
-          return;
+          return false;
         }
       } catch {
         // Replace broken saved state with a clean review state below.
@@ -231,21 +231,23 @@ export default function StartScreenClient() {
         })),
         submitted: true,
         statementOrder: level.statements.map((statement) => statement.id),
+        reviewGuideOnly: true,
       }),
     );
+    return true;
   };
 
   const handleRevealAnswers = () => {
-    prepareResultStateForCurrentLevel();
+    const guideOnly = prepareResultStateForCurrentLevel();
 
     if (hasNormalPass) {
-      localStorage.setItem(getRevealRequestKey(level.id), 'review');
+      localStorage.setItem(getRevealRequestKey(level.id), guideOnly ? 'review-guide' : 'review');
       router?.push('/result-screen');
       return;
     }
 
     if (hasAssistedUnlock) {
-      localStorage.setItem(getRevealRequestKey(level.id), 'assisted-review');
+      localStorage.setItem(getRevealRequestKey(level.id), guideOnly ? 'assisted-review-guide' : 'assisted-review');
       router?.push('/result-screen');
       return;
     }
