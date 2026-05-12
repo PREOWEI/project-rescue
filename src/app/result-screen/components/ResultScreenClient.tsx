@@ -58,23 +58,28 @@ export default function ResultScreenClient() {
       const score = calculateScore(resultLevel, loadedAnswers);
       setScoreData(score);
       localStorage.setItem(getLastScoreKey(resultLevel.id), String(score.percentage));
-      const permanentlyAssisted = localStorage.getItem(getAssistedUnlockKey(resultLevel.id)) === '1';
+      let permanentlyAssisted = localStorage.getItem(getAssistedUnlockKey(resultLevel.id)) === '1';
+      const revealRequest = localStorage.getItem(getRevealRequestKey(resultLevel.id));
+      const reviewOnly = revealRequest === 'review';
 
-      if (localStorage.getItem(getRevealRequestKey(resultLevel.id)) === '1') {
+      if (revealRequest) {
         localStorage.removeItem(getRevealRequestKey(resultLevel.id));
-        localStorage.setItem(getAssistedUnlockKey(resultLevel.id), '1');
+        if (revealRequest === 'assisted' || revealRequest === '1') {
+          localStorage.setItem(getAssistedUnlockKey(resultLevel.id), '1');
+          permanentlyAssisted = true;
+        }
         setAnswersRevealed(true);
       }
 
       const prevBest = localStorage.getItem(getBestScoreKey(resultLevel.id));
       const prevBestNum = prevBest !== null ? parseInt(prevBest, 10) : -1;
-      if (!permanentlyAssisted && score.percentage > prevBestNum) {
+      if (!permanentlyAssisted && !reviewOnly && score.percentage > prevBestNum) {
         localStorage.setItem(getBestScoreKey(resultLevel.id), String(score.percentage));
         setIsNewBest(true);
       }
 
       const hasXpScore = localStorage.getItem(getXpScoreKey(resultLevel.id)) !== null;
-      if (!permanentlyAssisted && score.percentage >= PASS_THRESHOLD && !hasXpScore) {
+      if (!permanentlyAssisted && !reviewOnly && score.percentage >= PASS_THRESHOLD && !hasXpScore) {
         localStorage.setItem(getXpScoreKey(resultLevel.id), String(score.percentage));
       }
     } catch {

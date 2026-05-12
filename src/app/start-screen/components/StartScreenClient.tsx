@@ -166,6 +166,7 @@ export default function StartScreenClient() {
   const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
   const modeSteps = getHowToPlaySteps(level.mode);
+  const hasNormalPass = bestScore !== null && bestScore >= PASS_THRESHOLD;
 
   useEffect(() => {
     const selectedLevel = getLevelById(getSelectedLevelId());
@@ -202,8 +203,43 @@ export default function StartScreenClient() {
   };
 
   const handleRevealAnswers = () => {
+    if (hasNormalPass) {
+      const saved = localStorage.getItem(STORAGE_KEY_GAME_STATE);
+      let hasSubmittedReviewState = false;
+
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          hasSubmittedReviewState = parsed?.levelId === level.id && parsed?.submitted === true;
+        } catch {
+          hasSubmittedReviewState = false;
+        }
+      }
+
+      if (!hasSubmittedReviewState) {
+        localStorage.setItem(
+          STORAGE_KEY_GAME_STATE,
+          JSON.stringify({
+            levelId: level.id,
+            answers: level.statements.map((statement) => ({
+              statementId: statement.id,
+              selected: statement.isRequirement,
+              classification: statement.isRequirement ? statement.correctType : undefined,
+              priority: statement.isRequirement ? statement.correctPriority : undefined,
+            })),
+            submitted: true,
+            statementOrder: level.statements.map((statement) => statement.id),
+          }),
+        );
+      }
+
+      localStorage.setItem(getRevealRequestKey(level.id), 'review');
+      router?.push('/result-screen');
+      return;
+    }
+
     localStorage.setItem(getAssistedUnlockKey(level.id), '1');
-    localStorage.setItem(getRevealRequestKey(level.id), '1');
+    localStorage.setItem(getRevealRequestKey(level.id), 'assisted');
     router?.push('/result-screen');
   };
 
@@ -328,7 +364,7 @@ export default function StartScreenClient() {
             onClick={() => setShowRevealConfirm(true)}
             className="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-700 font-semibold px-6 py-3.5 rounded-xl border border-amber-200 shadow-sm transition-all duration-150 text-base"
           >
-            Reveal Correct Answers
+            {hasNormalPass ? 'Review Correct Answers' : 'Reveal Correct Answers'}
           </button>
         )}
         {hasSavedProgress && (
@@ -347,6 +383,7 @@ export default function StartScreenClient() {
         <RevealAnswersModal
           onCancel={() => setShowRevealConfirm(false)}
           onConfirm={handleRevealAnswers}
+          mode={hasNormalPass ? 'review' : 'assisted'}
         />
       )}
     </div>
