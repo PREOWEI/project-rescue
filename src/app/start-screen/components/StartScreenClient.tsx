@@ -276,7 +276,7 @@ export default function StartScreenClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 flex flex-col items-center justify-center px-4 py-12 relative">
       <a
-        href="/"
+        href="/dashboard"
         className="absolute left-4 top-4 sm:left-8 sm:top-6 z-30 flex items-center gap-2 text-xs text-slate-500 hover:text-indigo-600 font-semibold bg-white/80 border border-slate-200 px-3 py-2 rounded-xl shadow-sm transition-colors duration-150"
       >
         <Home size={14} />

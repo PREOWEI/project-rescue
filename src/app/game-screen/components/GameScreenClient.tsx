@@ -189,7 +189,7 @@ export default function GameScreenClient() {
       timeLeft,
     };
     localStorage.setItem(STORAGE_KEY_GAME_STATE, JSON.stringify(state));
-    router.push('/');
+    router.push('/dashboard');
   };
 
   if (!hasLoadedGameState) {

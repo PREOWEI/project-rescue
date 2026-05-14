@@ -150,7 +150,7 @@ export default function ResultScreenClient() {
         {/* Back link */}
         <div className="mb-6">
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/dashboard')}
             className="text-xs text-slate-400 hover:text-indigo-600 font-medium transition-colors duration-150"
           >
             ← Back to Home

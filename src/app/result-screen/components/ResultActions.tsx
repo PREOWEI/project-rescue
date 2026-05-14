@@ -18,7 +18,7 @@ export default function ResultActions({ passed }: ResultActionsProps) {
   };
 
   const handleHome = () => {
-    router.push('/');
+    router.push('/dashboard');
   };
 
   return (
